@@ -1,0 +1,16 @@
+          <h1 class="page-header top">Račun</h1>
+          
+          <div class="row" style="text-align: right">
+          	<div class="col-md-6 hidden-xs hidden-sm">
+          	    <div ng-repeat="prihod in prihodi | orderBy:'money'"><span class="funds">{{ prihod.name }}</span><br></div>
+              	<div><span class="sallary">Plate</span><br></div>
+         	    <div ng-repeat="trosak in troskovi | orderBy:'money'"><span class="cost">{{ trosak.name }}</span><br></div>
+          	</div>
+          	<div class="col-md-4">
+          		<div ng-repeat="prihod in prihodi | orderBy:'money'"><span class="funds">+ {{ prihod.money }} RSD</span><br></div>
+          		<div><span class="sallary">- {{ plate }} RSD</span><br></div>
+          		<div ng-repeat="trosak in troskovi | orderBy:'money'"><span class="cost">- {{ trosak.money }} RSD</span><br></div>
+				<hr>
+				<span class="finalRacun"><span class="pull-left"><b>Ukupno:</b></span><span ng-class="{funds: final>0, cost: final<0, sallary: final==0}">{{ final }} RSD</span></span>
+          	</col-md-4>
+          </div>

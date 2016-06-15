@@ -1,0 +1,112 @@
+          <h1 class="page-header top">Troškovi</h1>
+
+		      <button type="button" class="btn btn-primary" ng-click="addCT()" id="addCTButton">Dodaj trošak</button>
+          <button type="button" class="btn btn-primary" ng-click="addC()" id="addCButton">Dodaj listu troškova</button>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-primary" ng-click="showCL()" id="showCLButton">Prikaži liste troškova</button>
+          <button type="button" class="btn btn-primary hidden" ng-click="hideCL()" id="hideCLButton">Sakrij liste troškova</button>
+
+          <div class="hidden" id="CostTicketChangeForm">
+            <h3 class="sub-header">Izmeni trošak</h3>
+
+            <form role="form" style="max-width: 350px">
+              <div class="form-group">
+                <label for="name">Trošak:</label>
+                <input type="text" class="form-control" ng-model="editedCT.name" required>
+              </div>
+              <div class="form-group">
+                <label for="money">Cena:</label>
+                <input type="text" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' ng-model="editedCT.cena" required>
+              </div>
+              <div class="form-group">
+                <label for="cl">Lista troškova:</label>
+                <select class="form-control" ng-model="editedCT.C" required>
+                  <option ng-repeat="cost in costs | orderBy:'name'" ng-value="{{ cost.id }}" ng-selected="cost.id==editedCT.C">{{ cost.name }}</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-success" ng-click="changeCostsTicket()">Izmeni</button>
+              <button class="btn btn-danger pull-right" ng-click="removeEditCT()">Otkaži</button>
+            </form>
+          </div>
+          
+          <div class="hidden" id="CostTicketAddForm">
+            <h3 class="sub-header">Dodaj trošak</h3>
+
+            <form role="form" style="max-width: 350px">
+              <div class="form-group">
+                <label for="name">Trošak:</label>
+                <input type="text" class="form-control" ng-model="addCostsTicket.name" required>
+              </div>
+              <div class="form-group">
+                <label for="money">Cena:</label>
+                <input type="text" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' ng-model="money" required>
+              </div>
+              <div class="form-group">
+                <label for="cl">Lista troškova:</label>
+                <select class="form-control" ng-model="addCostsTicket.costs" required>
+                  <option ng-repeat="cost in costs | orderBy:'name'" ng-value="{{ cost.id }}">{{ cost.name }}</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-success" ng-click="createCostsTicket()">Dodaj</button>
+              <button class="btn btn-danger pull-right" ng-click="removeCT()">Otkaži</button>
+            </form>
+          </div>
+          
+          <div class="hidden" id="CostAddForm">
+            <h3 class="sub-header">Dodaj listu troškova</h3>
+
+            <form role="form" style="max-width: 350px">
+              <div class="form-group">
+                <label for="name">Lista troškova:</label>
+                <input type="text" class="form-control" ng-model="addCost.name" required>
+              </div>
+              <button type="submit" class="btn btn-success" ng-click="createCost()">Dodaj</button>
+              <button class="btn btn-danger pull-right" ng-click="removeC()">Otkaži</button>
+            </form>
+          </div>
+
+          <h2 class="sub-header">Najskoriji troškovi</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Trošak</th>
+                  <th>Lista troškova</th>
+                  <th>Cena</th>
+                  <th>Opcije</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="ct in coststickets | orderBy: '-id' | limitTo:10"> 
+                  <td>{{ ct.name }}</td>
+                  <td>{{ (costs | filter:{"id":ct.costs})[0].name }}</td>
+                  <td>{{ ct.money }}</td>
+                  <td>
+                    <span class="hidden" ng-attr-id="{{ 'edited-sign-' + ct.id }}">Trenutno se menja</span>
+                    <button class="btn btn-success" ng-attr-id="{{ 'edit-button-' + ct.id }}" ng-click="editCostsTicket(ct.id)">Izmeni</button> 
+                    <button ng-attr-id="{{ 'deleted-button-' + ct.id }}" class="btn btn-danger" ng-click="deleteCostsTicket(ct.id)">Izbriši</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div id="costsList" class="hidden">
+            <h2 class="sub-header">Liste troškova</h2>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Lista troškova</th>
+                    <th>Ukupno zaduženje</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="c in costs"> 
+                    <td>{{ c.name }}</td>
+                    <td>{{ c.money }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>

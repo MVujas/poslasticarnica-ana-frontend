@@ -1,0 +1,140 @@
+          <h1 class="page-header top">Radnici</h1>
+          
+          <button type="button" class="btn btn-primary" ng-click="addW()" id="addWButton">Dodaj radnika</button>
+          <button type="button" class="btn btn-primary" ng-click="addWL()" id="addWLButton">Dodaj polozaj</button>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-primary" ng-click="showInactive()" id="showInactive">Prikazi neaktivne</button>
+          <button type="button" class="btn btn-primary hidden" ng-click="hideInactive()" id="hideInactive">Sakrij neaktivne</button>
+
+          <div class="hidden" id="workerAddForm">
+            <h3 class="sub-header">Dodaj radnika</h3>
+
+            <form role="form" style="max-width: 350px">
+              <div class="form-group">
+                <label for="name">Ime:</label>
+                <input type="text" class="form-control" ng-model="addWorker.name" required>
+              </div>
+              <div class="form-group">
+                <label for="surname">Prezime:</label>
+                <input type="text" class="form-control" ng-model="addWorker.surname" required>
+              </div>
+              <div class="form-group">
+                <label for="pay">Plata:</label>
+                <input type="text" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' ng-model="addWorker.plata" required>
+              </div>
+              <div class="form-group">
+                <label for="wl">Worker List:</label>
+                <select class="form-control" ng-model="addWorker.workerList" required>
+                  <option ng-repeat="wl in workerlists | orderBy:'name'" ng-value="{{ wl.id }}">{{ wl.name }}</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-success" ng-click="createWorker()">Dodaj</button>
+              <button class="btn btn-danger pull-right" ng-click="removeW()">Otkazi</button>
+            </form>
+          </div>
+
+          <div class="hidden" id="workerListAddForm">
+            <h3 class="sub-header">Dodaj polozaj</h3>
+
+            <form role="form" style="max-width: 350px">
+              <div class="form-group">
+                <label for="name">Polozaj:</label>
+                <input type="text" class="form-control" ng-model="addWorkerList.name" required>
+              </div>
+              <button type="submit" class="btn btn-success" ng-click="createWorkerList()">Dodaj</button>
+              <button class="btn btn-danger pull-right" ng-click="removeWL()">Otkazi</button>
+            </form>
+          </div>
+
+
+
+          <div id="workerEditForm" class="hidden">
+            <h3 class="sub-header">Izmeni radnika</h3>
+
+            <form role="form" style="max-width: 350px">
+              <div class="form-group">
+                <label for="name">Ime:</label>
+                <input type="text" class="form-control" ng-model="editedWorker.name" required>
+              </div>
+              <div class="form-group">
+                <label for="surname">Prezime:</label>
+                <input type="text" class="form-control" ng-model="editedWorker.surname" required>
+              </div>
+              <div class="form-group">
+                <label for="status">Status:</label>
+                <input type="text" class="form-control" ng-model="editedWorker.status" required>
+              </div>
+              <div class="form-group">
+                <label for="pay">Plata:</label>
+                <input type="text" class="form-control" onkeypress='return event.charCode >= 48 && event.charCode <= 57' ng-value="editedWorker.pay" ng-model="editedWorker.plata" required>
+              </div>
+              <div class="form-group">
+                <label for="wl">Worker List:</label>
+                <select class="form-control" ng-model="editedWorker.wl" required>
+                  <option ng-repeat="wl in workerlists | orderBy:'name'" ng-value="{{ wl.id }}" ng-selected="wl.id==editedWorker.workerlist">{{ wl.name }}</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-success" ng-click="changeWorker()">Izmeni</button>
+              <button class="btn btn-danger pull-right" ng-click="removeEditW()">Otkazi</button>
+            </form>
+          </div>
+
+
+
+
+
+          <h2 class="sub-header">Svi radnici</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Radnik</th>
+                  <th>Plata</th>
+                  <th>Polozaj</th>
+                  <th>Opcije</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="radnik in radnici | orderBy:'surname'" ng-if="radnik.status=='Active'"> 
+                  <td>{{ radnik.surname + " " + radnik.name }}</td>
+                  <td>{{ radnik.pay }}</td>
+                  <td>{{ workerlists[radnik.workerlist-1].name }}</td>
+                  <td>
+                    <span class="hidden" ng-attr-id="{{ 'edited-sign-' + radnik.id }}">Trenutno se menja</span>
+                    <button class="btn btn-success" ng-attr-id="{{ 'edit-button-' + radnik.id }}" ng-click="editW(radnik.id)">Izmeni</button> 
+                    <button ng-attr-id="{{ 'suspend-button-' + radnik.id }}" class="btn btn-danger" ng-click="deleteWorker(radnik.id)">Daj otkaz</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        <div id="inactive" class="hidden">
+          <h2 class="sub-header">Neaktivni radnici</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Radnik</th>
+                  <th>Plata</th>
+                  <th>Polozaj</th>
+                  <th>Status</th>
+                  <th>Opcije</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="radnik in radnici | orderBy:'surname'" ng-if="radnik.status!='Active'"> 
+                  <td>{{ radnik.surname + " " + radnik.name }}</td>
+                  <td>{{ radnik.pay }}</td>
+                  <td>{{ workerlists[radnik.workerlist-1].name }}</td>
+                  <td>{{ radnik.status }}</td>
+                  <td>
+                    <span class="hidden" ng-attr-id="{{ 'edited-sign-' + radnik.id }}">Trenutno se menja</span>
+                    <button class="btn btn-success" ng-attr-id="{{ 'edit-button-' + radnik.id }}" ng-click="editW(radnik.id)">Izmeni</button> 
+                    <button ng-attr-id="{{ 'suspend-button-' + radnik.id }}" class="btn btn-danger" ng-click="deleteWorker(radnik.id)">Daj otkaz</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
